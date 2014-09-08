@@ -4,10 +4,10 @@ FROM scratch
 # ADD http://www.busybox.net/downloads/binaries/latest/busybox-x86_64 /bin/busybox
 ADD busybox-x86_64 /usr/bin/busybox
 
-RUN ["/bin/busybox", "mkdir", "-p", "/usr/bin", "/lib", "/etc"]
-RUN ["/bin/busybox", "ln", "-s", "bin", "usr/sbin"]
-RUN ["/bin/busybox", "ln", "-s", "usr/bin", "bin"]
-RUN ["/bin/busybox", "ln", "-s", "usr/sbin", "sbin"]
-RUN ["/bin/busybox", "--install", "-s"]
+RUN ["/usr/bin/busybox", "mkdir", "-p", "/usr/bin", "/lib", "/etc"]
+RUN ["/usr/bin/busybox", "ln", "-s", "bin", "usr/sbin"]
+RUN ["/usr/bin/busybox", "ln", "-s", "usr/bin", "bin"]
+RUN ["/usr/bin/busybox", "ln", "-s", "usr/sbin", "sbin"]
+RUN ["/usr/bin/busybox", "--install", "-s"]
 
-CMD ["/bin/busybox", "sh"]
+CMD ["/usr/bin/busybox", "sh"]
