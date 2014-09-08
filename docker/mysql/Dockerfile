@@ -4,6 +4,7 @@ FROM enospc/pacman
 RUN mkdir -p /var/lib/mysql
 
 RUN pacman -Sy --noconfirm util-linux shadow mariadb
+RUN pacman -Scc --noconfirm
 
 ADD run /usr/local/bin/run
 RUN chmod +x /usr/local/bin/run
