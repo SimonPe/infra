@@ -8,4 +8,4 @@ all: $(IMAGES)
 
 %.dock: 
 	docker build -t $(NAMESPACE)/$* $*
-	docker save $(NAMESPACE)/$* | bzip2 > $@
+	#docker save $(NAMESPACE)/$* | bzip2 > $@

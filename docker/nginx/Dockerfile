@@ -8,4 +8,4 @@ ADD nginx.conf /etc/nginx/nginx.conf
 
 EXPOSE 80 443
 
-CMD ["/usr/bin/nginx", "-g", "'error_log stderr info; daemon off; '"]
+CMD ["/usr/bin/nginx", "-g", "error_log stderr info; daemon off;"]
