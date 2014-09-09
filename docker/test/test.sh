@@ -65,7 +65,7 @@ run mysql volumes=mysql-data env=MYSQL_DATABASE=test,MYSQL_USER=magento,MYSQL_PA
 run redis
 
 # php
-run php-fpm volumes=http-app,http-data link=mysql:mysql
+run php-fpm volumes=http-app,http-data link=mysql:mysql,redis:redis
 
 # hhvm
 #run hhvm volumes=http-app,http-data link=mysql:mysql
