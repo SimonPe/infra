@@ -6,7 +6,7 @@ appdir="$(pwd)/app"
 
 if [[ -z "$1" ]]
 then
-	ehco "usage: $0 PREFIX [APPDIR]"
+	echo "usage: $0 PREFIX [APPDIR]"
 	exit 1
 fi
 prefix=$1
@@ -61,7 +61,7 @@ run() {
 	done
 	cmdline="$cmdline $namespace/$img"
 	echo $cmdline
-	$cmdline
+	#$cmdline
 	echo
 }
 
@@ -84,3 +84,15 @@ run hhvm volumes=http-app,http-data link=mysql:mysql
 
 #run nginx volumes=http-app,http-data link=php-fpm:php-fpm
 run nginx volumes=http-app,http-data link=hhvm:php-fpm
+
+
+if [ "$(id -u)" == 0 ]
+then
+	su=""
+else
+	su="sudo"
+fi
+
+ip="$(docker inspect --format '{{ .NetworkSettings.IPAddress }}' ${prefix}-nginx)"
+
+$su sed -i "1 h; 1 !H;$ {x; s/^.* docker-${prefix}-nginx/${ip} docker-${prefix}-nginx/g; t; s/$/\n${ip} docker-${prefix}-nginx/}" /etc/hosts
