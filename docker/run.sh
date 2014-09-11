@@ -61,7 +61,7 @@ run() {
 	done
 	cmdline="$cmdline $namespace/$img"
 	echo $cmdline
-	#$cmdline
+	$cmdline
 	echo
 }
 
@@ -95,4 +95,4 @@ fi
 
 ip="$(docker inspect --format '{{ .NetworkSettings.IPAddress }}' ${prefix}-nginx)"
 
-$su sed -i "1 h; 1 !H;$ {x; s/^.* docker-${prefix}-nginx/${ip} docker-${prefix}-nginx/g; t; s/$/\n${ip} docker-${prefix}-nginx/}" /etc/hosts
+[[ -n "$ip" ]] && $su sed -i "1 h; 1 !H;$ {x; s/^.* docker-${prefix}-nginx/${ip} docker-${prefix}-nginx/g; t; s/$/\n${ip} docker-${prefix}-nginx/}" /etc/hosts
