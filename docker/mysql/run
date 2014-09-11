@@ -1,15 +1,17 @@
 #!/bin/bash
 set -e -x
 
-mkdir -p /run/mysqld
-chown -R mysql:mysql /var/lib/mysql /run/mysqld
+datadir=/var/lib/mysql/data
 
-if find /var/lib/mysql -maxdepth 0 -empty | read
+mkdir -p /run/mysqld
+chown -R mysql:mysql ${datadir} /run/mysqld
+
+if find ${datadir} -maxdepth 0 -empty | read
 then
 	firstrun=true
 fi
 
-/usr/bin/mysql_install_db --user=mysql --basedir=/usr --datadir=/var/lib/mysql
+/usr/bin/mysql_install_db --user=mysql --basedir=/usr --datadir=${datadir}
 
 MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD:-""}
 MYSQL_DATABASE=${MYSQL_DATABASE:-""}
@@ -39,8 +41,8 @@ EOF
 	    fi
 	fi
 
-	/usr/sbin/mysqld --user=mysql --bootstrap --verbose=0 $MYSQLD_ARGS < $tfile
+	/usr/sbin/mysqld --user=mysql --datadir=${datadir} --bootstrap --verbose=0 $MYSQLD_ARGS < $tfile
 	rm -f $tfile
 fi
 
-/usr/sbin/mysqld --user=mysql $MYSQLD_ARGS
+/usr/sbin/mysqld --user=mysql --datadir=${datadir} $MYSQLD_ARGS

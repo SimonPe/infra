@@ -14,4 +14,4 @@ COPY opcache.ini /etc/php/conf.d/opcache.ini
 
 EXPOSE 9000
 
-CMD /usr/bin/php-fpm --nodaemonize
+CMD ["/usr/bin/php-fpm", "--nodaemonize"]

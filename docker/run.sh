@@ -1,8 +1,20 @@
 #!/bin/bash
 
 namespace="enospc"
-
 prefix="test"
+appdir="$(pwd)/app"
+
+if [[ -z "$1" ]]
+then
+	ehco "usage: $0 PREFIX [APPDIR]"
+	exit 1
+fi
+prefix=$1
+
+if [[ -n "$2" ]] && [[ -d "$2" ]]
+then
+	appdir="$(realpath "$2")"
+fi
 
 run() {
 	img=$1
@@ -58,17 +70,17 @@ run mysql-data privileged
 run http-data
 
 # the app code itself
-run http-app bind=$(pwd)/app:/srv/http/app
+run http-app bind=${appdir}:/srv/http/app
 
 # databases
-run mysql volumes=mysql-data env=MYSQL_DATABASE=test,MYSQL_USER=magento,MYSQL_PASSWORD=magento
+run mysql volumes=mysql-data env=MYSQL_DATABASE=test,MYSQL_USER=test,MYSQL_PASSWORD=test
 run redis
 
 # php
-run php-fpm volumes=http-app,http-data link=mysql:mysql,redis:redis
+#run php-fpm volumes=http-app,http-data link=mysql:mysql,redis:redis
 
 # hhvm
-#run hhvm volumes=http-app,http-data link=mysql:mysql
+run hhvm volumes=http-app,http-data link=mysql:mysql
 
-run nginx volumes=http-app,http-data link=php-fpm:php-fpm
-#run nginx volumes=http-app,http-data link=hhvm:php-fpm
+#run nginx volumes=http-app,http-data link=php-fpm:php-fpm
+run nginx volumes=http-app,http-data link=hhvm:php-fpm
