@@ -1,0 +1,73 @@
+#user html;
+worker_processes  1;
+
+events {
+	worker_connections  1024;
+}
+
+http {
+	include       mime.types;
+	default_type  application/octet-stream;
+
+	server_names_hash_bucket_size  64;
+
+	sendfile        on;
+	#tcp_nopush     on;
+
+	keepalive_timeout  120;
+
+	gzip on;
+	gzip_http_version 1.1;
+	gzip_vary on;
+	gzip_comp_level 6;
+	gzip_proxied any;
+	gzip_types text/plain text/html text/css application/json application/x-javascript text/xml application/xml application/xml+rss text/javascript application/javascript text/x-js;
+	gzip_buffers 16 8k;
+
+	map $http_host $magecode {
+		default                      default;
+	}
+
+	server {
+		listen 80;
+		root /srv/http/app;
+		index index.html index.php; ## Allow a static html file to be shown first
+
+		location / {
+			try_files $uri $uri/ /index.php; ## If missing pass the URI to Magento's front handler
+			expires 30d; ## Assume all files are cachable
+		}
+
+		## These locations would be hidden by .htaccess normally
+		location ^~ /app/                { deny all; }
+		location ^~ /includes/           { deny all; }
+		location ^~ /lib/                { deny all; }
+		location ^~ /media/downloadable/ { deny all; }
+		location ^~ /pkginfo/            { deny all; }
+		location ^~ /report/config.xml   { deny all; }
+		location ^~ /var/                { deny all; }
+		location  /.                     { return 404; }
+
+		location ~ .php/ { ## Forward paths like /js/index.php/x.js to relevant handler
+			rewrite ^(.*.php)/ $1 last;
+		}
+
+		location ~ .php$ { ## Execute PHP scripts
+			try_files $uri =404;
+
+			expires        off; ## Do not cache dynamic content
+
+			fastcgi_pass   php-fpm:9000;
+			fastcgi_index  index.php;
+			include        fastcgi.conf;
+
+			# magento
+			fastcgi_param MAGE_RUN_CODE $magecode;
+			fastcgi_param MAGE_RUN_TYPE store; ## or website;
+
+			fastcgi_connect_timeout 65;
+			fastcgi_send_timeout 7200;
+			fastcgi_read_timeout 7200;
+		}
+	}
+}
