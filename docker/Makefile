@@ -14,7 +14,11 @@ busybox: busybox/busybox-x86_64 busybox.dock
 
 mysql-data: busybox mysql-data.dock
 
+mysql: mysql.dock
+
 http-data: busybox http-data.dock
+
+http-app: busybox http-app.dock
 
 nginx: nginx.dock
 
@@ -27,3 +31,8 @@ hhvm: hhvm.dock
 %.dock: 
 	docker build -t $(NAMESPACE)/$* $*
 	#docker save $(NAMESPACE)/$* | bzip2 > $@
+
+install: install-units
+
+install-units:
+	cp units/* /lib/systemd/system/

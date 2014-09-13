@@ -1,0 +1,18 @@
+[Unit]
+Description=HipHop virtual machine container for %I
+After=docker.service
+Requires=docker.service
+Requires=docker-http-data@%i.service docker-http-app@%i.service docker-mysql@%i.service docker-redis@%i.service
+After=docker-http-data@%i.service docker-http-app@%i.service docker-mysql@%i.service docker-redis@%i.service
+
+[Service]
+RestartSec=10s
+Type=notify
+NotifyAccess=all
+TimeoutStartSec=120
+TimeoutStopSec=15
+EnvironmentFile=/etc/containers/%i.conf
+ExecStart=/usr/bin/systemd-docker run --rm --name=%i-hhvm --volumes-from=%i-http-app --volumes-from=%i-http-data --link=%i-redis:redis --link=%i-mysql:mysql enospc/hhvm
+
+[Install]
+WantedBy=multi-user.target

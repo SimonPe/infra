@@ -1,0 +1,9 @@
+[Unit]
+Description=http-data container for %i
+
+[Service]
+Type=oneshot
+ExecStart=-/usr/bin/docker run --name=%i-http-data enospc/http-data
+
+[Install]
+WantedBy=multi-user.target

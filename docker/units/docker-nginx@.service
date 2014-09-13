@@ -1,0 +1,20 @@
+[Unit]
+Description=NginX web server container for %i
+After=docker.service
+Requires=docker.service
+Requires=docker-hhvm@.service docker-http-data@%i.service docker-http-app@%i.service
+After=docker-hhvm@.service docker-http-data@%i.service docker-http-app@%i.service
+Wants=docker-update-etc-hosts@%i-nginx.service
+Before=docker-update-etc-hosts@%i-nginx.service
+
+[Service]
+RestartSec=10s
+Type=notify
+NotifyAccess=all
+TimeoutStartSec=120
+TimeoutStopSec=15
+EnvironmentFile=/etc/containers/%i.conf
+ExecStart=/usr/bin/systemd-docker run --rm --name=%i-nginx -v=${NGINX_CONF}:/etc/nginx/nginx.conf --volumes-from=%i-http-app --volumes-from=%i-http-data --link=%i-hhvm:php-fpm enospc/nginx
+
+[Install]
+WantedBy=multi-user.target

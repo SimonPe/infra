@@ -1,0 +1,12 @@
+[Unit]
+Description=update /etc/hosts for docker container %i
+After=docker.service
+Requires=docker.service
+
+[Service]
+Type=oneshot
+ExecStart=/bin/sh -c 'ip=$(docker inspect --format "{{ .NetworkSettings.IPAddress }}" %i); \
+	[[ -n "$$ip" ]] && sed -ni "1 h; 1! H; $$ {x; s/\\n[^\\n]*docker-%i\(\\n\|$$\)/\\n$${ip} \\tdocker-%i\\1/pg; t;s/$$/\\n$${ip} \\tdocker-%i/p; }" /etc/hosts'
+
+[Install]
+WantedBy=multi-user.target

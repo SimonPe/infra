@@ -1,0 +1,16 @@
+[Unit]
+Description=mariadb container for %i
+After=docker.service
+Requires=docker.service
+
+[Service]
+RestartSec=10s
+Type=notify
+NotifyAccess=all
+TimeoutStartSec=120
+TimeoutStopSec=15
+EnvironmentFile=/etc/containers/%i.conf
+ExecStart=/usr/bin/systemd-docker run --rm --name=%i-redis enospc/redis
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,10 @@
+[Unit]
+Description=http-app container for %i
+
+[Service]
+Type=oneshot
+EnvironmentFile=/etc/containers/%i.conf
+ExecStart=-/usr/bin/docker run --name=%i-http-app -v=${APPDIR}:/srv/http/app enospc/http-app
+
+[Install]
+WantedBy=multi-user.target

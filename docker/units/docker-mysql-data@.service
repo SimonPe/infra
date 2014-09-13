@@ -1,0 +1,9 @@
+[Unit]
+Description=mysql-data container for %I
+
+[Service]
+Type=oneshot
+ExecStart=-/usr/bin/docker run --name=%I-mysql-data --privileged enospc/mysql-data
+
+[Install]
+WantedBy=multi-user.target
